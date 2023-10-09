@@ -15,8 +15,31 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::all();
+        if (!empty(request()->all())) {
+            // If more than 0
+            $perPage = request()->per_page;
+            $fieldName = request()->field_name;
+            $keyword = request()->keyword;
+            
+            $query = Student::query()
+            ->where($fieldName, 'LIKE', "%$keyword%")
+            ->orderBy('id', 'asc')
+            ->paginate($perPage);
+            return $query;
+            // return new CountryCollection($query);
+        } else {
+
+             $students = Student::all();
         return response()->json($students);
+            // If 0
+            // $query = $this->country->get();
+
+            // return new CountryCollection($query);
+        }
+
+
+        // $students = Student::all();
+        // return response()->json($students);
     }
 
     public function indexid($id)
@@ -28,8 +51,7 @@ class StudentController extends Controller
 
        public function store(Request $request)
         {
-            // dd($request->all());
-            // dd(URL());
+            // dd($request->image);
             // $request->validate([
             //     'name' => 'Required|max:50',
             //     'class' => 'Required|max:50',
@@ -39,20 +61,43 @@ class StudentController extends Controller
             // dd('dsfsdfgdsf');
     
             
+
+            // $data = $request->all();
+            // dd($data->['image']);
+    
+            // // Handle the base64-encoded image and store it in a unique file
+            // if ($data['image']) {
+            //     $file = $data['image'];
+            //     $directory = 'imagesss';
+            //     $filename = Str::random(10) . '_' . uniqid() . '.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
+            //     $path = $directory . '/' . $filename;
+            //     if (!File::exists($directory)) {
+            //         File::makeDirectory($directory, 0775, true, true);
+            //     }
+    
+            //     $image_parts = explode(";base64,", $file);
+            //     $image_base64 = base64_decode($image_parts[1]);
+            //     file_put_contents($path, $image_base64);
+            //     $data['image'] = 'http://localhost:8000/' . $path;
+    
+            // }
+            // $item = Student::create($data);
+
+            // if($item){
+            //     return response()->json([
+            //         'status'=>'200',
+            //         'message'=>'student added successfully'
+            //     ]);
+            // }else{
+            //     return response()->json([
+            //         'status'=>'201',
+            //         'message'=>'not found student'
+            //     ]);
+            // }
     
             $store = new Student;
             $store->name = $request->input('name');
             $store->class = $request->input('class');
-            //  $imageName = time().'.'.$request->image->getClientOriginalExtension();
-            //  $request->image->move(public_path('images'), $imageName);
-    
-            // if ($request->file('image')) {
-            //     $file = $request->file('image');
-            //     $extention = $file->getClientOriginalExtension();
-            //     $fileName = 'http://localhost:8000/imagesss/' . time() . '.' . $extention;
-            //     $file->move('imagesss', $fileName);
-            //     $store->image = $fileName;
-            // }
             if ($request->image) {
                 $file = $request->image;
                 // dd($file);
@@ -72,12 +117,6 @@ class StudentController extends Controller
                 // dd($image_base64);
                 file_put_contents($path, $image_base64);
                 $store->image = 'http://localhost:8000/'.$path;
-    
-                // $img = Image::make($image);
-                // $img->resize($width, $height, function ($constraint) {
-                // })->save($path);
-    
-                // return $path;
             }
             $store->save();
     

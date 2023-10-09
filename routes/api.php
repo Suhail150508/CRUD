@@ -36,3 +36,12 @@ Route::get('/student/{id}/edit',[StudentController::class,'indexid']);
 Route::put('/student/{id}/edit',[StudentController::class,'update']);
 Route::delete('/student/{id}/delete',[StudentController::class,'delete']);
 
+
+
+// Country
+Route::post('country/status', [CountryController::class, 'status'])->name('country.status');
+Route::delete('/country/force-delete/{id}', [CountryController::class, 'forceDelete'])->name('country.force_destroy');
+Route::get('/country/restore/{id}', [CountryController::class, 'restore'])->name('country.restore');
+Route::get('/country/deleted-list', [CountryController::class, 'deletedListIndex'])->name('country.deleted_list');
+Route::get('/country/edit/{id}', [CountryController::class, 'edit'])->name('country.edit');
+Route::apiResource('country', CountryController::class);
