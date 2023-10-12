@@ -229,4 +229,40 @@ class StudentController extends Controller
         ]);
      }
     }
+
+    public function downloadStudent($id){
+
+        // $jobPost = Student::findOrFail($id);
+        // $jobPost['image'] = $jobPost->documentFile?$jobPost->documentFile->source : "";
+        // $url = $jobPost->document;
+        // dd($url);
+        // $path = parse_url($url, PHP_URL_PATH);
+        // $filename = pathinfo($path, PATHINFO_BASENAME);
+        // $originalPath = public_path() . $path;
+        
+        // if (file_exists($originalPath)) {
+        //     return response()->download($originalPath, $filename);
+        // }
+        // return response()->json([
+        //     'status' => 'error',
+        //     'msg' => 'Resume file not found.',
+        // ]);
+
+        $post = Student::findOrFail($id);
+
+        // Access the Image model and get the file path.
+        $image = $post->image;
+        $url = $image->document;
+        $path = parse_url($image, PHP_URL_PATH);
+        $filename = pathinfo($path, PATHINFO_BASENAME);
+        $originalPath = public_path() . $path;
+        dd($originalPath, $filename);
+        if (file_exists($originalPath)) {
+            return response()->download($originalPath, $filename);
+        }
+        return response()->json([
+            'status' => 'error',
+            'msg' => 'Resume file not found.',
+         ]);
+        }
 }
