@@ -35,7 +35,7 @@ Route::post('/store',[StudentController::class,'store']);
 Route::get('/student/{id}/edit',[StudentController::class,'indexid']);
 Route::put('/student/{id}/edit',[StudentController::class,'update']);
 Route::delete('/student/{id}/delete',[StudentController::class,'delete']);
-
+Route::get('/download/student/file/{id}',[StudentController::class,'downloadStudent']);
 
 
 // Country
