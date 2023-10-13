@@ -19,10 +19,12 @@ class StudentController extends Controller
             // If more than 0
             $perPage = request()->per_page;
             $fieldName = request()->field_name;
+            $fieldClass = request()->field_class;
             $keyword = request()->keyword;
-            
+
             $query = Student::query()
             ->where($fieldName, 'LIKE', "%$keyword%")
+            ->orWhere($fieldClass, 'LIKE', "%$keyword%")
             ->orderBy('id', 'asc')
             ->paginate($perPage);
             return $query;
@@ -57,14 +59,14 @@ class StudentController extends Controller
             //     'class' => 'Required|max:50',
             //     'image' => 'Required',
             // ]);
-    
+
             // dd('dsfsdfgdsf');
-    
-            
+
+
 
             // $data = $request->all();
             // dd($data->['image']);
-    
+
             // // Handle the base64-encoded image and store it in a unique file
             // if ($data['image']) {
             //     $file = $data['image'];
@@ -74,12 +76,12 @@ class StudentController extends Controller
             //     if (!File::exists($directory)) {
             //         File::makeDirectory($directory, 0775, true, true);
             //     }
-    
+
             //     $image_parts = explode(";base64,", $file);
             //     $image_base64 = base64_decode($image_parts[1]);
             //     file_put_contents($path, $image_base64);
             //     $data['image'] = 'http://localhost:8000/' . $path;
-    
+
             // }
             // $item = Student::create($data);
 
@@ -94,7 +96,7 @@ class StudentController extends Controller
             //         'message'=>'not found student'
             //     ]);
             // }
-    
+
             $store = new Student;
             $store->name = $request->input('name');
             $store->class = $request->input('class');
@@ -104,13 +106,13 @@ class StudentController extends Controller
                 $directory = 'imagesss';
                 $filename = Str::random(10).'_'.uniqid().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
                 $path = $directory.'/'.$filename;
-    
+
                 // dd($filename, $path);
-    
+
                 if (!File::exists($directory)) {
                     File::makeDirectory($directory, 0775, true, true);
                 }
-    
+
                 $image_parts = explode(";base64,", $file);
                 // dd($image_parts);
                 $image_base64 = base64_decode($image_parts[1]);
@@ -119,9 +121,9 @@ class StudentController extends Controller
                 $store->image = 'http://localhost:8000/'.$path;
             }
             $store->save();
-    
+
             if (($store->save())) {
-    
+
                 return response()->json([
                     'status' => 200,
                     'message' => 'added successfully'
@@ -133,7 +135,7 @@ class StudentController extends Controller
                 ]);
             }
         }
-    
+
     public function edit($id)
     {
         $edit = Student::find($id);
@@ -180,27 +182,27 @@ class StudentController extends Controller
                 $directory = 'imagesss';
                 $filename = Str::random(10).'_'.uniqid().'.' . explode('/', explode(':', substr($file, 0, strpos($file, ';')))[1])[1];
                 $path = $directory.'/'.$filename;
-    
+
                 // dd($filename, $path);
-    
+
                 if (!File::exists($directory)) {
                     File::delete($directory, 0775, true, true);
                 }
-    
+
                 $image_parts = explode(";base64,", $file);
                 // dd($image_parts);
                 $image_base64 = base64_decode($image_parts[1]);
                 // dd($image_base64);
                 file_put_contents($path, $image_base64);
                 $update->image = 'http://localhost:8000/'.$path;
-    
+
                 // $img = Image::make($image);
                 // $img->resize($width, $height, function ($constraint) {
                 // })->save($path);
-    
+
                 // return $path;
             }
-            
+
             $update->update();
             return response()->json([
                 'status' => 200,
@@ -235,11 +237,10 @@ class StudentController extends Controller
         // $jobPost = Student::findOrFail($id);
         // $jobPost['image'] = $jobPost->documentFile?$jobPost->documentFile->source : "";
         // $url = $jobPost->document;
-        // dd($url);
         // $path = parse_url($url, PHP_URL_PATH);
         // $filename = pathinfo($path, PATHINFO_BASENAME);
         // $originalPath = public_path() . $path;
-        
+
         // if (file_exists($originalPath)) {
         //     return response()->download($originalPath, $filename);
         // }
@@ -252,11 +253,11 @@ class StudentController extends Controller
 
         // Access the Image model and get the file path.
         $image = $post->image;
-        $url = $image->document;
+        // $url = $image->document;
         $path = parse_url($image, PHP_URL_PATH);
         $filename = pathinfo($path, PATHINFO_BASENAME);
         $originalPath = public_path() . $path;
-        dd($originalPath, $filename);
+        // dd($originalPath);
         if (file_exists($originalPath)) {
             return response()->download($originalPath, $filename);
         }
